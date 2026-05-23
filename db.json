@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "app": "JO Dakar 2026",
+    "version": "1.0.0",
+    "description": "Base de données partagée — Jeux Olympiques de la Jeunesse Dakar 2026"
+  },
+
+  "events": [
+    { "id": 1, "name": "Finale 100m Sprint", "sport": "🏃 Athlétisme", "date": "15 Oct 2026", "time": "20:00", "venue": "Stade Léopold Sédar Senghor, Dakar", "capacity": 60000, "desc": "La finale du 100m, épreuve reine des JO.", "image": "images/sport1.jpg",
+      "zones": [
+        { "name": "Tribune Or", "price": 180, "available": 500 },
+        { "name": "Tribune Argent", "price": 90, "available": 1200 },
+        { "name": "Tribune Bronze", "price": 45, "available": 3000 },
+        { "name": "Pelouse", "price": 25, "available": 5000 }
+      ]
+    },
+    { "id": 2, "name": "Finale Football", "sport": "⚽ Football", "date": "18 Oct 2026", "time": "18:00", "venue": "Stade Abdoulaye Wade, Dakar", "capacity": 50000, "desc": "Grande finale du tournoi de football olympique.", "image": "images/football.jpg",
+      "zones": [
+        { "name": "VIP Central", "price": 220, "available": 300 },
+        { "name": "Tribune A", "price": 95, "available": 2000 },
+        { "name": "Tribune B", "price": 55, "available": 4000 },
+        { "name": "Virage", "price": 30, "available": 8000 }
+      ]
+    },
+    { "id": 3, "name": "Lutte Sénégalaise (Laamb)", "sport": "🤼 Lutte", "date": "12 Oct 2026", "time": "16:00", "venue": "Arène Nationale de Lutte, Dakar", "capacity": 20000, "desc": "Sport national du Sénégal, discipline phare des JO de Dakar.", "image": "images/lutte.jpg",
+      "zones": [
+        { "name": "Ringside VIP", "price": 150, "available": 200 },
+        { "name": "Tribune Centrale", "price": 70, "available": 800 },
+        { "name": "Gradin Général", "price": 30, "available": 2000 }
+      ]
+    },
+    { "id": 4, "name": "Demi-Finale Tennis", "sport": "🎾 Tennis", "date": "14 Oct 2026", "time": "14:00", "venue": "Court Central Dakar Tennis Club", "capacity": 8000, "desc": "Demi-finale du simple messieurs.", "image": "images/tennis.jpg",
+      "zones": [
+        { "name": "Loge Premium", "price": 200, "available": 100 },
+        { "name": "Tribune Couverte", "price": 85, "available": 600 },
+        { "name": "Tribune Découverte", "price": 40, "available": 1500 }
+      ]
+    },
+    { "id": 5, "name": "Finale Natation 200m", "sport": "🏊 Natation", "date": "13 Oct 2026", "time": "19:00", "venue": "Piscine Olympique de Dakar", "capacity": 10000, "desc": "Finale du 200m nage libre.", "image": "images/natation.jpg",
+      "zones": [
+        { "name": "Tribune Olympique", "price": 110, "available": 400 },
+        { "name": "Tribune Latérale", "price": 60, "available": 1000 },
+        { "name": "Virage Général", "price": 35, "available": 2500 }
+      ]
+    },
+    { "id": 6, "name": "Finale Taekwondo", "sport": "🥋 Taekwondo", "date": "16 Oct 2026", "time": "15:00", "venue": "Dakar Arena", "capacity": 15000, "desc": "Finales toutes catégories de Taekwondo.", "image": "images/sport0.jpg",
+      "zones": [
+        { "name": "Ringside", "price": 120, "available": 150 },
+        { "name": "Tribune Premium", "price": 65, "available": 600 },
+        { "name": "Tribune Générale", "price": 30, "available": 2000 }
+      ]
+    },
+    { "id": 7, "name": "Finale Basketball 3x3", "sport": "🏀 Basketball", "date": "17 Oct 2026", "time": "17:00", "venue": "Place de l'Obélisque, Dakar", "capacity": 5000, "desc": "Finale du basketball 3x3 en plein air.", "image": "images/sport2.jpg",
+      "zones": [
+        { "name": "Zone VIP", "price": 90, "available": 200 },
+        { "name": "Tribune Est", "price": 45, "available": 800 },
+        { "name": "Accès Libre Debout", "price": 20, "available": 2000 }
+      ]
+    },
+    { "id": 8, "name": "Finale Aviron 8+", "sport": "🚣 Aviron", "date": "11 Oct 2026", "time": "10:00", "venue": "Lac Rose, Dakar", "capacity": 12000, "desc": "Grande finale du huit avec barreur.", "image": "images/sport0.jpg",
+      "zones": [
+        { "name": "Plateforme VIP", "price": 130, "available": 250 },
+        { "name": "Tribune Principale", "price": 60, "available": 1000 },
+        { "name": "Rive Libre", "price": 25, "available": 3000 }
+      ]
+    }
+  ],
+
+  "tickets": [
+    { "id": "TK001", "eventId": 1, "zone": "Tribune Or", "price": 180, "seat": "A-12", "client": "Moussa Diallo", "email": "moussa@example.sn", "status": "vendu", "date": "02 Jun 2026" },
+    { "id": "TK002", "eventId": 1, "zone": "Tribune Argent", "price": 90, "seat": "B-45", "client": "Fatou Sène", "email": "fatou@example.sn", "status": "vendu", "date": "03 Jun 2026" },
+    { "id": "TK003", "eventId": 2, "zone": "VIP Central", "price": 220, "seat": "VIP-08", "client": "Cheikh Ndiaye", "email": "cheikh@example.sn", "status": "réservé", "date": "04 Jun 2026" },
+    { "id": "TK004", "eventId": 3, "zone": "Ringside VIP", "price": 150, "seat": "R-03", "client": "Aminata Touré", "email": "aminata@example.sn", "status": "vendu", "date": "05 Jun 2026" },
+    { "id": "TK005", "eventId": 4, "zone": "Loge Premium", "price": 200, "seat": "L-01", "client": "Ibrahima Ba", "email": "ibrahima@example.sn", "status": "disponible", "date": "06 Jun 2026" },
+    { "id": "TK006", "eventId": 5, "zone": "Tribune Olympique", "price": 110, "seat": "TO-22", "client": "Rokhaya Fall", "email": "rokhaya@example.sn", "status": "vendu", "date": "07 Jun 2026" },
+    { "id": "TK007", "eventId": 2, "zone": "Tribune A", "price": 95, "seat": "TA-67", "client": "Omar Faye", "email": "omar@example.sn", "status": "réservé", "date": "08 Jun 2026" },
+    { "id": "TK008", "eventId": 6, "zone": "Ringside", "price": 120, "seat": "RS-05", "client": "Ndéye Diop", "email": "ndeye@example.sn", "status": "vendu", "date": "09 Jun 2026" },
+    { "id": "TK009", "eventId": 7, "zone": "Zone VIP", "price": 90, "seat": "VP-11", "client": "Aliou Cissé", "email": "aliou@example.sn", "status": "disponible", "date": "10 Jun 2026" },
+    { "id": "TK010", "eventId": 8, "zone": "Plateforme VIP", "price": 130, "seat": "PV-04", "client": "Sokhna Mbaye", "email": "sokhna@example.sn", "status": "annulé", "date": "11 Jun 2026" },
+    { "id": "TK011", "eventId": 1, "zone": "Pelouse", "price": 25, "seat": "PL-200", "client": "Papa Sarr", "email": "papa@example.sn", "status": "vendu", "date": "12 Jun 2026" },
+    { "id": "TK012", "eventId": 3, "zone": "Tribune Centrale", "price": 70, "seat": "TC-33", "client": "Khadija Konaté", "email": "khadija@example.sn", "status": "réservé", "date": "13 Jun 2026" }
+  ],
+
+  "reservations": [
+    { "ref": "RES-001", "client": "Moussa Diallo", "email": "moussa@example.sn", "eventId": 1, "qty": 2, "amount": 360, "date": "02 Jun 2026", "status": "confirmée" },
+    { "ref": "RES-002", "client": "Cheikh Ndiaye", "email": "cheikh@example.sn", "eventId": 2, "qty": 3, "amount": 660, "date": "04 Jun 2026", "status": "en attente" },
+    { "ref": "RES-003", "client": "Aminata Touré", "email": "aminata@example.sn", "eventId": 3, "qty": 1, "amount": 150, "date": "05 Jun 2026", "status": "confirmée" },
+    { "ref": "RES-004", "client": "Ibrahima Ba", "email": "ibrahima@example.sn", "eventId": 4, "qty": 2, "amount": 400, "date": "06 Jun 2026", "status": "en attente" },
+    { "ref": "RES-005", "client": "Rokhaya Fall", "email": "rokhaya@example.sn", "eventId": 5, "qty": 4, "amount": 440, "date": "07 Jun 2026", "status": "confirmée" },
+    { "ref": "RES-006", "client": "Sokhna Mbaye", "email": "sokhna@example.sn", "eventId": 8, "qty": 2, "amount": 260, "date": "11 Jun 2026", "status": "annulée" }
+  ],
+
+  "users": [
+    { "id": "U001", "firstName": "Admin", "lastName": "Dakar2026", "email": "admin@dakar2026.sn", "role": "admin", "password": "admin2026" },
+    { "id": "U002", "firstName": "Moussa", "lastName": "Diallo", "email": "moussa@example.sn", "role": "client", "phone": "+221 77 123 45 67", "password": "client123" },
+    { "id": "U003", "firstName": "Fatou", "lastName": "Sène", "email": "fatou@example.sn", "role": "client", "phone": "+221 76 234 56 78", "password": "client123" }
+  ],
+
+  "stats": {
+    "totalTicketsSold": 7,
+    "totalRevenue": 1070,
+    "totalEvents": 8,
+    "totalCapacity": 180000
+  }
+}

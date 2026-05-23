@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dakar 2026 — Portail Officiel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00853F; --yellow: #FDEF42; --red: #DF0024;
+    --gold: #D4A017; --gold-light: #FFD84A;
+    --ink: #0D1A0F;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--ink);
+    color: #fff;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 2rem;
+    position: relative; overflow: hidden;
+  }
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(0,133,63,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(212,160,23,0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(223,0,36,0.08) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .flag-bar {
+    position: fixed; top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(to right, var(--green) 33.33%, var(--yellow) 33.33%, var(--yellow) 66.66%, var(--red) 66.66%);
+    z-index: 10;
+  }
+
+  .portal {
+    max-width: 900px; width: 100%; position: relative; z-index: 1;
+    text-align: center;
+  }
+
+  /* Olympic rings */
+  .rings { display: flex; justify-content: center; gap: 6px; margin-bottom: 2rem; }
+  .ring {
+    width: 48px; height: 48px; border-radius: 50%; border: 5px solid;
+    animation: ringPop 0.6s cubic-bezier(0.34,1.56,0.64,1) backwards;
+  }
+  .ring:nth-child(1) { border-color: var(--green); animation-delay: 0.1s; }
+  .ring:nth-child(2) { border-color: var(--yellow); animation-delay: 0.2s; }
+  .ring:nth-child(3) { border-color: var(--red); animation-delay: 0.3s; }
+  .ring:nth-child(4) { border-color: #e8e8e8; animation-delay: 0.4s; }
+  .ring:nth-child(5) { border-color: #555; animation-delay: 0.5s; }
+  @keyframes ringPop {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .eyebrow {
+    font-size: 0.72rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold-light); margin-bottom: 1rem;
+    animation: fadeUp 0.7s 0.6s both;
+  }
+  .main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900; line-height: 1.1;
+    animation: fadeUp 0.7s 0.7s both;
+  }
+  .main-title em { font-style: italic; color: var(--gold-light); }
+  .subtitle {
+    color: rgba(255,255,255,0.55); font-size: 1rem; margin-top: 1rem; margin-bottom: 3rem;
+    animation: fadeUp 0.7s 0.8s both;
+  }
+  @keyframes fadeUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; animation: fadeUp 0.7s 0.9s both; }
+
+  .portal-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 2.5rem 2rem;
+    text-decoration: none; color: #fff;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    display: block; position: relative; overflow: hidden;
+  }
+  .portal-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,133,63,0.1), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .portal-card:hover { transform: translateY(-8px); border-color: var(--green); box-shadow: 0 20px 60px rgba(0,133,63,0.2); }
+  .portal-card:hover::before { opacity: 1; }
+  .portal-card.admin::before { background: linear-gradient(135deg, rgba(212,160,23,0.1), transparent); }
+  .portal-card.admin:hover { border-color: var(--gold-light); box-shadow: 0 20px 60px rgba(212,160,23,0.15); }
+
+  .card-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+  .card-title {
+    font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900;
+    margin-bottom: 0.5rem;
+  }
+  .card-desc { color: rgba(255,255,255,0.55); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem; }
+  .card-features { list-style: none; text-align: left; margin-bottom: 1.5rem; }
+  .card-features li {
+    font-size: 0.82rem; color: rgba(255,255,255,0.7); padding: 0.3rem 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
+  .portal-card.admin .card-features li::before { color: var(--gold-light); }
+
+  .card-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 0.75rem 1.8rem; border-radius: 30px;
+    font-weight: 700; font-size: 0.88rem; letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .portal-card .card-btn { background: var(--green); color: #fff; }
+  .portal-card.admin .card-btn { background: var(--gold); color: var(--ink); }
+
+  .db-info {
+    margin-top: 2rem; padding: 1rem 1.5rem;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; font-size: 0.78rem; color: rgba(255,255,255,0.4);
+    animation: fadeUp 0.7s 1s both;
+  }
+  .db-info span { color: var(--green); font-weight: 600; }
+
+  @media(max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+    .ring { width: 36px; height: 36px; border-width: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="flag-bar"></div>
+
+<div class="portal">
+  <div class="rings">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+  </div>
+
+  <div class="eyebrow">Portail Officiel · Jeux Olympiques de la Jeunesse</div>
+  <div class="main-title">Dakar <em>2026</em> 🇸🇳</div>
+  <div class="subtitle">L'Afrique accueille les Jeux Olympiques pour la première fois — Bienvenue !</div>
+
+  <div class="cards">
+    <a href="client/index.html" class="portal-card">
+      <span class="card-icon">🎟️</span>
+      <div class="card-title">Billetterie</div>
+      <div class="card-desc">Achetez vos billets pour les épreuves olympiques. Interface grand public avec panier et paiement.</div>
+      <ul class="card-features">
+        <li>Catalogue des 8 épreuves</li>
+        <li>Sélection de zones & prix</li>
+        <li>Panier & paiement sécurisé</li>
+        <li>Mes billets & mon compte</li>
+      </ul>
+      <div class="card-btn">Accéder à la billetterie →</div>
+    </a>
+
+    <a href="admin/index.html" class="portal-card admin">
+      <span class="card-icon">⚙️</span>
+      <div class="card-title">Administration</div>
+      <div class="card-desc">Tableau de bord de gestion complète : tickets, événements, réservations et statistiques.</div>
+      <ul class="card-features">
+        <li>KPIs & statistiques temps réel</li>
+        <li>Gestion des événements</li>
+        <li>CRUD tickets & réservations</li>
+        <li>Suivi capacité par épreuve</li>
+      </ul>
+      <div class="card-btn">Accéder au dashboard →</div>
+    </a>
+  </div>
+
+  <div class="db-info">
+    📦 Base de données : <span>data/db.json</span> —
+    <span>8</span> événements · <span>12</span> tickets · <span>6</span> réservations · <span>3</span> utilisateurs
+  </div>
+</div>
+
+</body>
+</html>
