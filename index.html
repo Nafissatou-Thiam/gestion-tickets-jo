@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dakar 2026 — Gestion des Tickets</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A017;
+    --gold-light: #F0B820;
+    --gold-bright: #FFD84A;
+    --green: #00853F;
+    --green-mid: #00A34E;
+    --green-light: #4DC97A;
+    --green-dim: rgba(0,133,63,0.12);
+    --red: #DF0024;
+    --yellow: #FDEF42;
+    --ink: #0D1A0F;
+    --ink-mid: #142B18;
+    --ink-light: #1E3D24;
+    --white: #F8F5EE;
+    --gray: #7A9080;
+    --success: #00A34E;
+    --warn: #D4A017;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--ink);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
+    border-bottom: 2px solid var(--green);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  /* Senegal flag stripe under header */
+  header::after {
+    content: '';
+    position: absolute; bottom: -5px; left: 0; right: 0; height: 3px;
+    background: linear-gradient(to right, var(--green) 33.33%, var(--yellow) 33.33%, var(--yellow) 66.66%, var(--red) 66.66%);
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-rings { display: flex; gap: 4px; }
+  .ring {
+    width: 20px; height: 20px; border-radius: 50%; border: 3px solid;
+  }
+  .ring:nth-child(1) { border-color: var(--green); }
+  .ring:nth-child(2) { border-color: var(--yellow); }
+  .ring:nth-child(3) { border-color: var(--red); }
+  .ring:nth-child(4) { border-color: #F8F5EE; }
+  .ring:nth-child(5) { border-color: #2A2A2A; }
+  .logo h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--gold-bright); font-weight: 900; }
+  .logo span { font-size: 0.65rem; color: var(--gray); letter-spacing: 2px; text-transform: uppercase; display: block; margin-top: -3px; }
+
+  .header-stats { display: flex; gap: 2rem; }
+  .hstat { text-align: center; }
+  .hstat-val { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold-bright); line-height: 1; font-weight: 700; }
+  .hstat-lbl { font-size: 0.65rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── LAYOUT ── */
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 72px); }
+
+  /* ── SIDEBAR ── */
+  aside {
+    background: var(--ink-mid);
+    border-right: 1px solid rgba(0,133,63,0.25);
+    padding: 1.5rem 0;
+  }
+  .nav-section { margin-bottom: 0.5rem; }
+  .nav-label { font-size: 0.6rem; color: var(--gray); text-transform: uppercase; letter-spacing: 2px; padding: 0.5rem 1.5rem; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.65rem 1.5rem; cursor: pointer;
+    transition: all 0.2s; font-size: 0.9rem; color: var(--gray);
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: rgba(0,133,63,0.08); color: var(--white); }
+  .nav-item.active { background: rgba(0,133,63,0.15); color: var(--green-light); border-left-color: var(--green); }
+  .nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+  /* ── MAIN ── */
+  main { padding: 2rem; overflow-y: auto; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; letter-spacing: 1px; color: var(--white); font-weight: 900; }
+  .page-title span { color: var(--green-light); font-style: italic; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 0.6rem 1.4rem; border: none; border-radius: 30px;
+    cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 600;
+    transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .btn-gold { background: var(--green); color: #fff; }
+  .btn-gold:hover { background: var(--green-mid); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,133,63,0.35); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--green); color: var(--green-light); border-radius: 30px; }
+  .btn-outline:hover { background: rgba(0,133,63,0.1); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #b5001d; }
+  .btn-sm { padding: 0.35rem 0.85rem; font-size: 0.78rem; }
+
+  /* ── CARDS ── */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+  .card {
+    background: var(--ink-mid);
+    border: 1px solid rgba(0,133,63,0.2);
+    border-radius: 14px; padding: 1.4rem;
+    transition: all 0.25s;
+  }
+  .card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,133,63,0.15); }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .kpi {
+    background: var(--ink-mid);
+    border: 1px solid rgba(0,133,63,0.2);
+    border-radius: 14px; padding: 1.2rem 1.4rem;
+    position: relative; overflow: hidden;
+  }
+  .kpi::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(to right, var(--green), var(--gold-light));
+  }
+  .kpi-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .kpi-val { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold-bright); line-height: 1; font-weight: 700; }
+  .kpi-lbl { font-size: 0.75rem; color: var(--gray); margin-top: 4px; }
+
+  /* ── TABLE ── */
+  .table-wrap { background: var(--ink-mid); border: 1px solid rgba(0,133,63,0.2); border-radius: 14px; overflow: hidden; }
+  .table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,133,63,0.15); }
+  .search-input {
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(0,133,63,0.25);
+    color: var(--white); border-radius: 30px; padding: 0.5rem 1.2rem; font-size: 0.85rem;
+    width: 260px; font-family: 'Outfit', sans-serif;
+  }
+  .search-input::placeholder { color: var(--gray); }
+  .search-input:focus { outline: none; border-color: var(--green); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--gray); padding: 0.9rem 1.5rem; text-align: left;
+    background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(0,133,63,0.12);
+  }
+  td { padding: 0.9rem 1.5rem; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,133,63,0.05); }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .badge-green { background: rgba(0,163,78,0.18); color: var(--green-light); }
+  .badge-orange { background: rgba(212,160,23,0.18); color: var(--gold-light); }
+  .badge-red { background: rgba(223,0,36,0.18); color: #FF4060; }
+  .badge-blue { background: rgba(0,133,63,0.15); color: var(--green-light); }
+  .badge-gray { background: rgba(122,144,128,0.18); color: var(--gray); }
+
+  /* ── SPORT TAG ── */
+  .sport-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,133,63,0.12); border: 1px solid rgba(0,133,63,0.25);
+    color: var(--green-light); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem;
+  }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,10,4,0.8); z-index: 200;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--ink-mid);
+    border: 1px solid rgba(0,133,63,0.35);
+    border-radius: 18px; padding: 2rem; width: 520px; max-width: 95vw;
+    animation: slideUp 0.25s ease;
+    position: relative; overflow: hidden;
+  }
+  .modal::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(to right, var(--green) 33.33%, var(--yellow) 33.33%, var(--yellow) 66.66%, var(--red) 66.66%);
+  }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold-bright); margin-bottom: 1.5rem; letter-spacing: 1px; font-weight: 700; margin-top: 0.5rem; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+  input, select, textarea {
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(0,133,63,0.2);
+    color: var(--white); border-radius: 10px; padding: 0.6rem 0.9rem;
+    font-size: 0.88rem; font-family: 'Outfit', sans-serif; transition: border 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green); }
+  select option { background: var(--ink-mid); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+  /* ── TICKET CARD ── */
+  .ticket-card {
+    background: var(--ink-mid);
+    border: 1px solid rgba(0,133,63,0.22);
+    border-radius: 14px; overflow: hidden;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .ticket-card:hover { border-color: var(--green); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,133,63,0.2); }
+  .ticket-top {
+    background: linear-gradient(135deg, var(--ink-light), var(--ink-mid));
+    padding: 1.2rem 1.4rem; border-bottom: 1px dashed rgba(0,133,63,0.3);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .ticket-sport { font-size: 2rem; }
+  .ticket-event { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--white); font-weight: 700; }
+  .ticket-venue { font-size: 0.78rem; color: var(--gray); }
+  .ticket-bottom { padding: 1rem 1.4rem; display: flex; align-items: center; justify-content: space-between; }
+  .ticket-price { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold-bright); font-weight: 700; }
+  .ticket-holes {
+    position: absolute; top: 50%; left: -10px; transform: translateY(-50%);
+    width: 20px; height: 20px; background: var(--ink); border-radius: 50%;
+  }
+  .ticket-holes-r {
+    position: absolute; top: 50%; right: -10px; transform: translateY(-50%);
+    width: 20px; height: 20px; background: var(--ink); border-radius: 50%;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+    background: var(--green); color: #fff; padding: 0.8rem 1.5rem;
+    border-radius: 30px; font-size: 0.88rem; font-weight: 600;
+    transform: translateY(20px); opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,133,63,0.4);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.err { background: var(--red); box-shadow: 0 8px 24px rgba(223,0,36,0.35); }
+
+  /* ── EVENTS TABLE FILTER ── */
+  .filter-bar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .filter-chip {
+    padding: 0.4rem 1rem; border-radius: 20px; border: 1.5px solid rgba(0,133,63,0.25);
+    cursor: pointer; font-size: 0.8rem; color: var(--gray); transition: all 0.2s;
+    background: transparent;
+  }
+  .filter-chip.active, .filter-chip:hover { border-color: var(--green); color: var(--green-light); background: rgba(0,133,63,0.1); }
+
+  /* ── PROGRESS BAR ── */
+  .prog-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+  .prog-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    aside { display: none; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .header-stats { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-rings">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="ring"></div><div class="ring"></div>
+    </div>
+    <div>
+      <h1>Dakar 2026</h1>
+      <span>Gestion des Tickets</span>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-val" id="h-total">0</div><div class="hstat-lbl">Tickets Total</div></div>
+    <div class="hstat"><div class="hstat-val" id="h-vendus">0</div><div class="hstat-lbl">Vendus</div></div>
+    <div class="hstat"><div class="hstat-val" id="h-events">0</div><div class="hstat-lbl">Épreuves</div></div>
+  </div>
+</header>
+
+<div class="app">
+<!-- SIDEBAR -->
+<aside>
+  <div class="nav-section">
+    <div class="nav-label">Menu Principal</div>
+    <div class="nav-item active" onclick="showView('dashboard')"><span class="nav-icon">🏠</span> Tableau de bord</div>
+    <div class="nav-item" onclick="showView('events')"><span class="nav-icon">🏟️</span> Épreuves</div>
+    <div class="nav-item" onclick="showView('tickets')"><span class="nav-icon">🎫</span> Tickets</div>
+    <div class="nav-item" onclick="showView('reservations')"><span class="nav-icon">📋</span> Réservations</div>
+  </div>
+  <div class="nav-section" style="margin-top:1rem">
+    <div class="nav-label">Actions</div>
+    <div class="nav-item" onclick="openModal('ticketModal')"><span class="nav-icon">➕</span> Nouveau ticket</div>
+    <div class="nav-item" onclick="openModal('eventModal')"><span class="nav-icon">🎯</span> Nouvel événement</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <div class="page-header">
+      <div class="page-title">Tableau de <span>Bord</span></div>
+      <button class="btn btn-gold" onclick="openModal('ticketModal')">+ Nouveau Ticket</button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-icon">🎫</div><div class="kpi-val" id="kpi-total">0</div><div class="kpi-lbl">Tickets créés</div></div>
+      <div class="kpi"><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-vendus">0</div><div class="kpi-lbl">Vendus</div></div>
+      <div class="kpi"><div class="kpi-icon">🔒</div><div class="kpi-val" id="kpi-reserves">0</div><div class="kpi-lbl">Réservés</div></div>
+      <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-val" id="kpi-ca">0€</div><div class="kpi-lbl">Chiffre d'affaires</div></div>
+    </div>
+
+    <div class="page-title" style="font-size:1.4rem; margin-bottom:1rem">Tickets <span>Récents</span></div>
+    <div class="cards-grid" id="recent-tickets"></div>
+
+    <div class="page-title" style="font-size:1.4rem; margin-bottom:1rem">Taux de <span>Remplissage</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Épreuve</th><th>Sport</th><th>Capacité</th><th>Vendus</th><th>Taux</th></tr></thead>
+        <tbody id="fill-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="view" id="view-events">
+    <div class="page-header">
+      <div class="page-title">Épreuves <span>Olympiques</span></div>
+      <button class="btn btn-gold" onclick="openModal('eventModal')">+ Ajouter</button>
+    </div>
+    <div class="filter-bar" id="sport-filters"></div>
+    <div class="cards-grid" id="events-grid"></div>
+  </div>
+
+  <!-- TICKETS -->
+  <div class="view" id="view-tickets">
+    <div class="page-header">
+      <div class="page-title">Gestion des <span>Tickets</span></div>
+      <button class="btn btn-gold" onclick="openModal('ticketModal')">+ Nouveau</button>
+    </div>
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <input class="search-input" placeholder="🔍  Rechercher un ticket..." oninput="renderTickets(this.value)">
+        <div style="display:flex;gap:0.5rem">
+          <select onchange="filterTicketStatus(this.value)" style="padding:0.5rem 0.8rem;border-radius:8px;font-size:0.82rem">
+            <option value="">Tous les statuts</option>
+            <option value="disponible">Disponible</option>
+            <option value="réservé">Réservé</option>
+            <option value="vendu">Vendu</option>
+            <option value="annulé">Annulé</option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>Épreuve</th><th>Zone</th><th>Prix</th><th>Client</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody id="tickets-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RESERVATIONS -->
+  <div class="view" id="view-reservations">
+    <div class="page-header">
+      <div class="page-title">Réservations <span>Clients</span></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Réf.</th><th>Client</th><th>Épreuve</th><th>Nb Tickets</th><th>Montant</th><th>Date</th><th>Statut</th></tr></thead>
+        <tbody id="resa-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- MODAL: TICKET -->
+<div class="modal-bg" id="ticketModal">
+  <div class="modal">
+    <div class="modal-title">🎫 Nouveau Ticket</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Épreuve</label>
+        <select id="t-event"></select>
+      </div>
+      <div class="form-group">
+        <label>Zone / Catégorie</label>
+        <select id="t-zone">
+          <option>Zone A — VIP</option>
+          <option>Zone B — Tribune Est</option>
+          <option>Zone C — Tribune Ouest</option>
+          <option>Zone D — Virage Nord</option>
+          <option>Zone E — Virage Sud</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Prix (€)</label>
+        <input id="t-price" type="number" min="1" placeholder="Ex: 120">
+      </div>
+      <div class="form-group">
+        <label>Siège</label>
+        <input id="t-seat" type="text" placeholder="Ex: R12 S04">
+      </div>
+      <div class="form-group">
+        <label>Nom du client (optionnel)</label>
+        <input id="t-client" type="text" placeholder="Jean Dupont">
+      </div>
+      <div class="form-group">
+        <label>Statut</label>
+        <select id="t-status">
+          <option value="disponible">Disponible</option>
+          <option value="réservé">Réservé</option>
+          <option value="vendu">Vendu</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('ticketModal')">Annuler</button>
+      <button class="btn btn-gold" onclick="saveTicket()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EVENT -->
+<div class="modal-bg" id="eventModal">
+  <div class="modal">
+    <div class="modal-title">🏟️ Nouvel Événement</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nom de l'épreuve</label>
+        <input id="e-name" type="text" placeholder="Ex: Finale 100m Hommes">
+      </div>
+      <div class="form-group">
+        <label>Sport</label>
+        <select id="e-sport">
+          <option>🏃 Athlétisme</option>
+          <option>🏊 Natation</option>
+          <option>⚽ Football</option>
+          <option>🏀 Basketball</option>
+          <option>🎾 Tennis</option>
+          <option>🥊 Boxe</option>
+          <option>🤸 Gymnastique</option>
+          <option>🚴 Cyclisme</option>
+          <option>🏋️ Haltérophilie</option>
+          <option>🤼 Lutte</option>
+          <option>🏐 Volleyball</option>
+          <option>🎯 Tir</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input id="e-date" type="date">
+      </div>
+      <div class="form-group">
+        <label>Heure</label>
+        <input id="e-time" type="time">
+      </div>
+      <div class="form-group">
+        <label>Lieu</label>
+        <input id="e-venue" type="text" placeholder="Ex: Stade de France">
+      </div>
+      <div class="form-group">
+        <label>Capacité</label>
+        <input id="e-capacity" type="number" min="100" placeholder="Ex: 80000">
+      </div>
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea id="e-desc" placeholder="Informations sur l'épreuve..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('eventModal')">Annuler</button>
+      <button class="btn btn-gold" onclick="saveEvent()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let events = [
+  { id: 1, name: "Finale 100m Hommes", sport: "🏃 Athlétisme", date: "2024-08-04", time: "21:00", venue: "Stade de France", capacity: 80000, desc: "La finale la plus attendue des JO." },
+  { id: 2, name: "Demi-finale Natation 200m NL", sport: "🏊 Natation", date: "2024-07-30", time: "19:30", venue: "Paris La Défense Arena", capacity: 15000, desc: "Demi-finale 200m nage libre." },
+  { id: 3, name: "Quart de finale Football Hommes", sport: "⚽ Football", date: "2024-08-02", time: "18:00", venue: "Parc des Princes", capacity: 48000, desc: "Phase quart de finale." },
+  { id: 4, name: "Finale Basket 3x3 Femmes", sport: "🏀 Basketball", date: "2024-08-05", time: "16:00", venue: "La Concorde", capacity: 8000, desc: "Finale basket 3x3." },
+  { id: 5, name: "Finale Gymnasique Artistique", sport: "🤸 Gymnastique", date: "2024-08-01", time: "14:00", venue: "Bercy Arena", capacity: 20000, desc: "Concours général individuel." },
+];
+
+let tickets = [
+  { id: "TK001", eventId: 1, zone: "Zone A — VIP", price: 350, seat: "R01 S01", client: "Marie Curie", status: "vendu" },
+  { id: "TK002", eventId: 1, zone: "Zone B — Tribune Est", price: 180, seat: "R05 S12", client: "Pierre Bernard", status: "vendu" },
+  { id: "TK003", eventId: 2, zone: "Zone A — VIP", price: 220, seat: "R02 S08", client: "Sophie Martin", status: "réservé" },
+  { id: "TK004", eventId: 3, zone: "Zone C — Tribune Ouest", price: 90, seat: "R10 S20", client: "", status: "disponible" },
+  { id: "TK005", eventId: 4, zone: "Zone B — Tribune Est", price: 150, seat: "R03 S05", client: "Luc Fontaine", status: "réservé" },
+  { id: "TK006", eventId: 5, zone: "Zone A — VIP", price: 280, seat: "R01 S14", client: "Amina Diallo", status: "vendu" },
+  { id: "TK007", eventId: 1, zone: "Zone D — Virage Nord", price: 60, seat: "R15 S33", client: "", status: "disponible" },
+  { id: "TK008", eventId: 2, zone: "Zone E — Virage Sud", price: 55, seat: "R18 S07", client: "Omar Sy", status: "vendu" },
+];
+
+let reservations = [
+  { ref: "RES-001", client: "Marie Curie", eventId: 1, qty: 2, amount: 700, date: "2024-06-15", status: "confirmée" },
+  { ref: "RES-002", client: "Sophie Martin", eventId: 2, qty: 1, amount: 220, date: "2024-06-20", status: "en attente" },
+  { ref: "RES-003", client: "Luc Fontaine", eventId: 4, qty: 3, amount: 450, date: "2024-07-01", status: "confirmée" },
+  { ref: "RES-004", client: "Amina Diallo", eventId: 5, qty: 1, amount: 280, date: "2024-07-05", status: "confirmée" },
+];
+
+let ticketStatusFilter = "";
+let nextEventId = 6;
+let nextTicketNum = 9;
+
+// ── NAV ──
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  event.currentTarget.classList.add('active');
+  render();
+}
+
+// ── RENDER ──
+function render() {
+  updateKPIs();
+  renderRecentTickets();
+  renderFillTable();
+  renderEvents();
+  renderTickets();
+  renderReservations();
+  populateEventSelect();
+  updateHeader();
+}
+
+function updateHeader() {
+  document.getElementById('h-total').textContent = tickets.length;
+  document.getElementById('h-vendus').textContent = tickets.filter(t => t.status === 'vendu').length;
+  document.getElementById('h-events').textContent = events.length;
+}
+
+function updateKPIs() {
+  const total = tickets.length;
+  const vendus = tickets.filter(t => t.status === 'vendu').length;
+  const reserves = tickets.filter(t => t.status === 'réservé').length;
+  const ca = tickets.filter(t => t.status === 'vendu').reduce((s, t) => s + t.price, 0);
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-vendus').textContent = vendus;
+  document.getElementById('kpi-reserves').textContent = reserves;
+  document.getElementById('kpi-ca').textContent = ca.toLocaleString() + '€';
+}
+
+function renderRecentTickets() {
+  const el = document.getElementById('recent-tickets');
+  const recent = [...tickets].reverse().slice(0, 4);
+  el.innerHTML = recent.map(t => {
+    const ev = events.find(e => e.id === t.eventId) || {};
+    return `<div class="ticket-card">
+      <div class="ticket-holes"></div>
+      <div class="ticket-holes-r"></div>
+      <div class="ticket-top">
+        <div>
+          <div class="ticket-event">${ev.name || '—'}</div>
+          <div class="ticket-venue">📍 ${ev.venue || ''} · ${ev.date || ''}</div>
+          <div style="margin-top:8px"><span class="sport-tag">${ev.sport || ''}</span></div>
+        </div>
+        <div>${statusBadge(t.status)}</div>
+      </div>
+      <div class="ticket-bottom">
+        <div>
+          <div style="font-size:0.75rem;color:var(--gray)">${t.zone} · Siège ${t.seat}</div>
+          <div style="font-size:0.8rem;color:var(--white);margin-top:2px">${t.client || '<em style="color:var(--gray)">Sans client</em>'}</div>
+        </div>
+        <div class="ticket-price">${t.price}€</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderFillTable() {
+  const el = document.getElementById('fill-table');
+  el.innerHTML = events.map(ev => {
+    const sold = tickets.filter(t => t.eventId === ev.id && t.status === 'vendu').length;
+    const pct = ev.capacity ? Math.min(100, Math.round(sold / ev.capacity * 100 * 500)) : 0; // demo multiplier
+    const color = pct > 75 ? '#2ECC71' : pct > 40 ? '#F39C12' : '#E8302A';
+    return `<tr>
+      <td style="font-weight:600">${ev.name}</td>
+      <td><span class="sport-tag">${ev.sport}</span></td>
+      <td>${ev.capacity.toLocaleString()}</td>
+      <td>${sold}</td>
+      <td style="min-width:140px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="prog-bar" style="flex:1"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span style="font-size:0.78rem;color:${color}">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderEvents(filter = 'all') {
+  // build filter chips
+  const sports = [...new Set(events.map(e => e.sport))];
+  const fc = document.getElementById('sport-filters');
+  if (fc) fc.innerHTML = `<button class="filter-chip ${filter==='all'?'active':''}" onclick="renderEvents('all')">Tous</button>` +
+    sports.map(s => `<button class="filter-chip ${filter===s?'active':''}" onclick="renderEvents('${s}')">${s}</button>`).join('');
+
+  const el = document.getElementById('events-grid');
+  const filtered = filter === 'all' ? events : events.filter(e => e.sport === filter);
+  el.innerHTML = filtered.map(ev => {
+    const ticketCount = tickets.filter(t => t.eventId === ev.id).length;
+    const sold = tickets.filter(t => t.eventId === ev.id && t.status === 'vendu').length;
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.8rem">
+        <span class="sport-tag">${ev.sport}</span>
+        <button class="btn btn-red btn-sm" onclick="deleteEvent(${ev.id})">✕</button>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:4px">${ev.name}</div>
+      <div style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem">📍 ${ev.venue}</div>
+      <div style="display:flex;gap:1rem;font-size:0.78rem;color:var(--gray)">
+        <span>📅 ${ev.date}</span><span>⏰ ${ev.time}</span>
+      </div>
+      <div style="display:flex;gap:1rem;font-size:0.78rem;margin-top:0.8rem">
+        <span style="color:var(--green-light)">🎫 ${ticketCount} tickets</span>
+        <span style="color:#2ECC71">✅ ${sold} vendus</span>
+        <span style="color:var(--gray)">👥 ${ev.capacity.toLocaleString()}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTickets(search = '', statusFilter = ticketStatusFilter) {
+  ticketStatusFilter = statusFilter;
+  const el = document.getElementById('tickets-tbody');
+  let list = [...tickets];
+  if (search) list = list.filter(t => {
+    const ev = events.find(e => e.id === t.eventId) || {};
+    return t.id.includes(search.toUpperCase()) || (ev.name || '').toLowerCase().includes(search.toLowerCase()) || t.client.toLowerCase().includes(search.toLowerCase());
+  });
+  if (statusFilter) list = list.filter(t => t.status === statusFilter);
+
+  el.innerHTML = list.map(t => {
+    const ev = events.find(e => e.id === t.eventId) || {};
+    return `<tr>
+      <td style="font-weight:600;color:var(--green-light)">${t.id}</td>
+      <td>${ev.name || '—'}</td>
+      <td><span style="font-size:0.78rem">${t.zone}</span></td>
+      <td style="font-weight:600">${t.price}€</td>
+      <td>${t.client || '<em style="color:var(--gray)">—</em>'}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>
+        <div style="display:flex;gap:0.4rem">
+          <button class="btn btn-outline btn-sm" onclick="cycleStatus('${t.id}')">Changer</button>
+          <button class="btn btn-red btn-sm" onclick="deleteTicket('${t.id}')">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  if (!list.length) el.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--gray);padding:2rem">Aucun ticket trouvé</td></tr>`;
+}
+
+function filterTicketStatus(v) { renderTickets('', v); }
+
+function renderReservations() {
+  const el = document.getElementById('resa-tbody');
+  el.innerHTML = reservations.map(r => {
+    const ev = events.find(e => e.id === r.eventId) || {};
+    const badge = r.status === 'confirmée' ? 'badge-green' : r.status === 'en attente' ? 'badge-orange' : 'badge-red';
+    return `<tr>
+      <td style="color:var(--green-light);font-weight:600">${r.ref}</td>
+      <td>${r.client}</td>
+      <td>${ev.name || '—'}</td>
+      <td>${r.qty}</td>
+      <td style="font-weight:600">${r.amount.toLocaleString()}€</td>
+      <td style="color:var(--gray)">${r.date}</td>
+      <td><span class="badge ${badge}">${r.status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function populateEventSelect() {
+  const sel = document.getElementById('t-event');
+  if (!sel) return;
+  sel.innerHTML = events.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+}
+
+// ── HELPERS ──
+function statusBadge(s) {
+  const map = { 'vendu': 'badge-green', 'réservé': 'badge-orange', 'disponible': 'badge-blue', 'annulé': 'badge-red' };
+  return `<span class="badge ${map[s] || 'badge-gray'}">${s}</span>`;
+}
+
+function cycleStatus(id) {
+  const t = tickets.find(t => t.id === id);
+  if (!t) return;
+  const cycle = ['disponible', 'réservé', 'vendu', 'annulé'];
+  t.status = cycle[(cycle.indexOf(t.status) + 1) % cycle.length];
+  render(); toast('Statut mis à jour: ' + t.status);
+}
+
+function deleteTicket(id) {
+  tickets = tickets.filter(t => t.id !== id);
+  render(); toast('Ticket supprimé', true);
+}
+
+function deleteEvent(id) {
+  events = events.filter(e => e.id !== id);
+  tickets = tickets.filter(t => t.eventId !== id);
+  render(); toast('Épreuve supprimée', true);
+}
+
+// ── MODAL ──
+function openModal(id) {
+  populateEventSelect();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+function saveTicket() {
+  const eventId = parseInt(document.getElementById('t-event').value);
+  const zone = document.getElementById('t-zone').value;
+  const price = parseFloat(document.getElementById('t-price').value);
+  const seat = document.getElementById('t-seat').value;
+  const client = document.getElementById('t-client').value;
+  const status = document.getElementById('t-status').value;
+  if (!price || !seat) { toast('Veuillez remplir tous les champs obligatoires', true); return; }
+  const id = 'TK' + String(nextTicketNum++).padStart(3, '0');
+  tickets.push({ id, eventId, zone, price, seat, client, status });
+  closeModal('ticketModal');
+  render(); toast('Ticket ' + id + ' créé !');
+}
+
+function saveEvent() {
+  const name = document.getElementById('e-name').value;
+  const sport = document.getElementById('e-sport').value;
+  const date = document.getElementById('e-date').value;
+  const time = document.getElementById('e-time').value;
+  const venue = document.getElementById('e-venue').value;
+  const capacity = parseInt(document.getElementById('e-capacity').value);
+  const desc = document.getElementById('e-desc').value;
+  if (!name || !date || !venue || !capacity) { toast('Veuillez remplir tous les champs', true); return; }
+  events.push({ id: nextEventId++, name, sport, date, time, venue, capacity, desc });
+  closeModal('eventModal');
+  render(); toast('Épreuve ajoutée !');
+}
+
+// ── TOAST ──
+function toast(msg, err = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (err ? ' err' : '') + ' show';
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── INIT ──
+render();
+</script>
+</body>
+</html>
